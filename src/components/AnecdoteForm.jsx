@@ -8,21 +8,23 @@ const AnecdoteForm = () => {
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: (newAnecdote) => {
-      const anecdotes = queryClient.getQueryData('anecdotes')
-      queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote))
+      const anecdotes = queryClient.getQueryData(['anecdotes']); 
+      queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote)); 
     },
-  })
+  });
+  
 
   const addAnecdote = async (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
+    if (content.trim().length <= 5) {
+      alert('Anecdote content must be at least 5 characters long.');
+      return; // Don't proceed with the POST request
+    }
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content, votes: 0 })
   }
 
-  // const updateAnecdote = (anecdote) => {
-  //   updateAnecdoteMutation.mutate({...anecdote, votes: votes + 1 })
-  // }
 
   return (
     <div>
