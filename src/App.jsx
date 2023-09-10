@@ -31,13 +31,19 @@ const App = () => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
     dispatch({ type: 'SHOW_NOTIFICATION', message:anecdote.content + '  voted on!' });
   };
+  const handleAnecdoteFormError = (errorMessage) => {
+    // Handle the error message here, e.g., display it in the UI
+    if (errorMessage) {
+      alert(errorMessage); // Display an alert for the error
+    }
+  };
 
   return (
     <div>
       <h3>Anecdote app</h3>
 
       <Notification />
-      <AnecdoteForm />
+      <AnecdoteForm onErrorCallback={handleAnecdoteFormError} />
 
       {anecdotes.map((anecdote) => (
         <div key={anecdote.id}>
