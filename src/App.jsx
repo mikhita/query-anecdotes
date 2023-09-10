@@ -1,33 +1,36 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAnecdotes, updateAnecdote } from './requests/requests'
-import AnecdoteForm from './components/AnecdoteForm'
-import Notification from './components/Notification'
+import React from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getAnecdotes, updateAnecdote } from './requests/requests';
+import AnecdoteForm from './components/AnecdoteForm';
+import Notification from './components/Notification';
+import { useNotification } from './NotificationContext'; 
 
 const App = () => {
-  const queryClient = useQueryClient()
+  const { dispatch } = useNotification();
+  
+  const queryClient = useQueryClient();
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      queryClient.invalidateQueries({ queryKey: ['anecdotes'] });
     },
-  })
+  });
 
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
-  })
-
-  console.log(JSON.parse(JSON.stringify(result)))
+  });
 
   if (result.isLoading) {
-    return <div>loading data...</div>
+    return <div>loading data...</div>;
   }
 
-  const anecdotes = result.data
+  const anecdotes = result.data;
 
   const handleUpdateAnecdote = (anecdote) => {
-    updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
-  }
+    updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
+    dispatch({ type: 'SHOW_NOTIFICATION', message:anecdote.content + '  voted on!' });
+  };
 
   return (
     <div>
@@ -46,7 +49,7 @@ const App = () => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
